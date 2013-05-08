@@ -1,4 +1,4 @@
-#VERSION: 1.00
+#VERSION: 1.01
 #AUTHORS: Boris Nagaev (bnagaev@gmail.com)
 # This plugin is licensed under the GNU GPL Version 2.
 
