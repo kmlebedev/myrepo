@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#VERSION: 1.00
+#VERSION: 1.01
 #AUTHORS: Anatoly Mayorov (mmajor@yandex.ru)
 # This plugin is licensed under the GNU GPL Version 2.
 
