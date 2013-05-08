@@ -9,7 +9,7 @@ from urllib import quote
 import re
 
 
-torrent_pattern = re.compile(r'''<tr class=".*"><td>.*</td><td.*><a class="downgif" href="(?P<link>.+)"><img src=".+" alt="D" /></a><a href=".+"><img src=".+" alt="M" /></a>\s*<a href=".*">(?P<name>.+)</a></td>\s*(<td align="right">.+<img.*></td>)?\s*<td align="right">(?P<size>.+)</td><td align="center"><span class="green"><img src=".+" alt="S" />(?P<seeds>.*)</span> <img src=".*" alt="L" /><span class="red">(?P<leech>.+)</span></td></tr>''')
+torrent_pattern = re.compile(r'''<tr class=".*"><td>.*</td><td.*><a class="downgif" href="(?P<link>.+)"><img src=".+" alt="D" /></a><a href=".+"><img src=".+" alt="M" /></a>\s*<a href="(?P<desc_link>.+)">(?P<name>.+)</a></td>\s*(<td align="right">.+<img.*></td>)?\s*<td align="right">(?P<size>.+)</td><td align="center"><span class="green"><img src=".+" alt="S" />(?P<seeds>.*)</span> <img src=".*" alt="L" /><span class="red">(?P<leech>.+)</span></td></tr>''')
 
 tag = re.compile(r'<.*?>')
 
@@ -45,7 +45,7 @@ class rutor(object):
         dat = retrieve_url(self.query_pattern % params)
         for el in torrent_pattern.finditer(dat):
             d = el.groupdict()
-            d['link'] = d['link']
+            d['desc_link'] = self.url + d['desc_link']
             d['engine_url'] = self.url
             d['name'] = tag.sub('', d['name'])
             yield d
