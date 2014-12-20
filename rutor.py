@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-#VERSION: 1.01
-#AUTHORS: Anatoly Mayorov (mmajor@yandex.ru)
+#VERSION: 1.1
+#AUTHORS: Anatoly Mayorov (mmajor@yandex.ru), Konstantin Lebedev (whitef0x@ya.ru)
 # This plugin is licensed under the GNU GPL Version 2.
 
 from novaprinter import prettyPrinter
