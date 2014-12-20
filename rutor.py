@@ -107,7 +107,3 @@ class rutor(object):
                 prettyPrinter(d)
                 f = True
             start += 1
-
-#http://d.rutor.org/download/189658|The Haunted Mansion (2003) PS2 |1395864371| 0| 0|http://rutor.org|http://rutor.org/torrent/189658/the-haunted-mansion-2003-ps2
-
-#http://www.mininova.org/get/13216617|Haunted House Shooter Game Free Download New 2013 ____ in Windows|2946498|1|0|http://www.mininova.org|http://www.mininova.org/tor/13216617/0
