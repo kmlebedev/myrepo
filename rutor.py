@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#VERSION: 1.1
+#VERSION: 1.2
 #AUTHORS: Anatoly Mayorov (mmajor@yandex.ru), Konstantin Lebedev (whitef0x@ya.ru)
 # This plugin is licensed under the GNU GPL Version 2.
 
@@ -28,7 +28,7 @@ class rutor(object):
     
     ''' RUTOR.ORG Russian free tracker '''
 
-    url = 'http://rutor.org'
+    url = 'http://x-bit.net/'
 
     name = 'rutor.org'
 
