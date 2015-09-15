@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
-#VERSION: 1.2
+#VERSION: 1.3
 #AUTHORS: Anatoly Mayorov (mmajor@yandex.ru), Konstantin Lebedev (whitef0x@ya.ru)
 # This plugin is licensed under the GNU GPL Version 2.
 
 from novaprinter import prettyPrinter
 from helpers import download_file, htmlentitydecode
-from urllib import quote
-import cookielib
+import http.cookiejar
 import re
 import gzip
-import StringIO
-import urllib2
+from io import StringIO
+import urllib.parse
+import urllib.request
 import os
+import logging
 
 '''
 <tr class="gai"><td>12&nbsp;Дек&nbsp;14</td><td ><a class="downgif" href="http://d.rutor.org/download/397232"><img src="http://s.rutor.org/i/d.gif" alt="D" /></a><a href="magnet:?xt=urn:btih:fc3ce688c351b60862da9dfa23953008ee1c1a33&dn=rutor.org&tr=udp://bt.rutor.org:2710&tr=http://retracker.local/announce"><img src="http://s.rutor.org/i/m.png" alt="M" /></a>
@@ -27,11 +28,8 @@ tag = re.compile(r'<.*?>')
 class rutor(object):
     
     ''' RUTOR.ORG Russian free tracker '''
-
     url = 'http://x-bit.net/'
-
     name = 'rutor.org'
-
     supported_categories = {'all': 0,
                             'movies': 1,
                             'tv': 6,
@@ -49,12 +47,16 @@ class rutor(object):
     def __init__(self):
         pass
 
+    def download_torrent(self, info): 
+        print(download_file(info, info))
+
+
     def retrieve_url(self,url):
-        cj = cookielib.MozillaCookieJar(self.cookie_filename)
+        cj = http.cookiejar.MozillaCookieJar(self.cookie_filename)
         if os.access(self.cookie_filename, os.F_OK):
             cj.load()
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-        req = urllib2.Request(url)
+        opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+        req = urllib.request.Request(url)
         response = opener.open(req)
         dat = response.read()
         # Check if it is gzipped
@@ -62,13 +64,14 @@ class rutor(object):
             # Data is gzip encoded, decode it
             compressedstream = StringIO.StringIO(dat)
             gzipper = gzip.GzipFile(fileobj=compressedstream)
-            extracted_data = gzipper.read()
-            dat = extracted_data
+            dat = gzipper.read()
+
         # document.cookie.indexOf('_ddn_intercept_2_=ebdc811923afde6a39f0d7bc77dfe97d')
-        m = re.search(self.cookie_pattern, dat)
+ 
+        m = re.search(self.cookie_pattern, dat.decode('utf-8'))
         if m:
             #opener.addheaders.append(('Cookie', m.group('cookie')))
-            ck = cookielib.Cookie(version=0, name=m.group('name'), value=m.group('value'), port=None, port_specified=False, domain=self.name, domain_specified=False, domain_initial_dot=False, path='/', path_specified=True, secure=False, expires=None, discard=True, comment=None, comment_url=None, rest={'HttpOnly': None}, rfc2109=False)
+            ck = http.cookiejar.Cookie(version=0, name=m.group('name'), value=m.group('value'), port=None, port_specified=False, domain=self.name, domain_specified=False, domain_initial_dot=False, path='/', path_specified=True, secure=False, expires=None, discard=True, comment=None, comment_url=None, rest={'HttpOnly': None}, rfc2109=False)
             cj.set_cookie(ck)
             cj.save(self.cookie_filename, ignore_discard=True, ignore_expires=True)
             response = opener.open(req)
@@ -87,10 +90,10 @@ class rutor(object):
 
     def search_page(self, what, cat, start):
         params = {'url': self.url,
-                'q': quote(what),
+                'q': urllib.parse.quote(what),
                 'f': self.supported_categories[cat],
                 'start': start}
-        dat = self.retrieve_url(self.query_pattern % params)
+        dat = self.retrieve_url(self.query_pattern % params).decode('utf-8')
         for el in torrent_pattern.finditer(dat):
             d = el.groupdict()
             d['desc_link'] = self.url + d['desc_link']
@@ -104,6 +107,14 @@ class rutor(object):
         while f:
             f = False
             for d in self.search_page(what, cat, start):
-                prettyPrinter(d)
+                if __name__ != "__main__":
+                    prettyPrinter(d)
                 f = True
             start += 1
+
+# For testing purposes.
+if __name__ == "__main__":
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    engine = rutor()
+    engine.search('friends')
